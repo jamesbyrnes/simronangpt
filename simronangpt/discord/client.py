@@ -1,8 +1,10 @@
+import os
+from dotenv import load_dotenv
 import discord
 from discord import app_commands
 
-# TODO: REPLACE WITH REAL GUILD# OR ENV
-GUILD_NUM = discord.Object(id=0)
+load_dotenv()
+GUILD_ID = discord.Object(id=os.getenv('DISCORD_GUILD_ID'))
 
 class DiscordClient(discord.Client):
     def __init__(self, *, intents: discord.Intents):
@@ -10,8 +12,8 @@ class DiscordClient(discord.Client):
         self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self):
-        self.tree.copy_global_to(guild=GUILD_NUM)
-        await self.tree.sync(guild=GUILD_NUM)
+        self.tree.copy_global_to(guild=GUILD_ID)
+        await self.tree.sync(guild=GUILD_ID)
 
 intents = discord.Intents.default()
 client = DiscordClient(intents=intents)
@@ -21,8 +23,10 @@ async def on_ready():
     print(f'Logged in as {client.user} (ID: {client.user.id})')
     print('------')
 
-def run():
-    print('hi, starting up')
+@client.tree.command()
+async def hello(interaction: discord.Interaction):
+    """Says hello!"""
+    await interaction.response.send_message(f'Hi, {interaction.user.mention}')
 
-    # TODO: REPLACE WITH REAL TOKEN OR ENV
-    client('token')
+def run():
+    client.run(os.getenv('DISCORD_BOT_TOKEN'))
