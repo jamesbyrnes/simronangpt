@@ -25,8 +25,13 @@ async def on_ready():
     print('------')
 
 @client.tree.command()
-async def hello(interaction: discord.Interaction):
-    ai_response = openai_client.prompt()
+async def notafraid(interaction: discord.Interaction):
+    ai_response = openai_client.prompt_simple_lyric()
+    await interaction.response.send_message(ai_response)
+
+@client.tree.command()
+async def bookofronan(interaction: discord.Interaction, topic: str):
+    ai_response = openai_client.prompt_topical_lyric(topic)
     await interaction.response.send_message(ai_response)
 
 def run():
